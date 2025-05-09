@@ -2,7 +2,7 @@
   "name": "devtinder-backend",
   "version": "1.0.0",
   "description": "Backend service for DevTinder - a social platform for developers",
-  "main": "src/app.js",
+  "main": "app.js",
   "scripts": {
     "dev": "node app.js",
     "start": "nodemon app.js",
