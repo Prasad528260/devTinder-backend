@@ -1,10 +1,14 @@
 const express= require("express");
 const app=express();
 
-app.use((req,res)=>{
+app.get("/hello",(req,res)=>{
+    res.send("second hello")
+})
+app.use("/",(req,res)=>{
     res.send("hello there")
   
 })
+
 
 
 const PORT=3000;
