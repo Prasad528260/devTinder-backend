@@ -6,27 +6,9 @@ const user = require("./models/user");
 app.use(express.json());
 
 app.post("/signup", async (req, res) => {
-  // const userObj={
-  //   firstName:"Prasad",
-  //   lastName:"Subhedar",
-  //   email:"p@gmail.com",
-  //   password:"Prasad@123",
-  //   age:20,
-  //   gender:"Male",
-  // };
-
+  
   // //? creating new user with the data or technically creating a new instance of User model
   // const user=new User(userObj);
-
-  // ? another way
-  // const user = new User({
-  //   firstName: "Virat",
-  //   lastName: "Kohli",
-  //   email: "virat@gmail.com",
-  //   password: "Virat@123",
-  //   age: 38,
-  //   gender: "Male",
-  // });
 
   // ? Dynamic way to create instance os user
   const user = new User(req.body);
