@@ -6,3 +6,6 @@
 - CREATE A DELETE USER API
 - API level validations on patch request and Signup post 
 - Add API validation for each field
+
+
+NEVER EVER TRUST req.body
