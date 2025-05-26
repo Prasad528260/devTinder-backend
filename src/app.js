@@ -6,7 +6,6 @@ const user = require("./models/user");
 app.use(express.json());
 
 app.post("/signup", async (req, res) => {
-  
   // //? creating new user with the data or technically creating a new instance of User model
   // const user=new User(userObj);
 
@@ -68,7 +67,7 @@ app.get("/userId", async (req, res) => {
 });
 
 // * DELETE A USER
-app.delete("/userdelete", async (req, res) => {
+app.delete("/user", async (req, res) => {
   try {
     const user = await User.findByIdAndDelete({ _id: req.body._id });
     res.send("user deleted successfully");
@@ -78,11 +77,27 @@ app.delete("/userdelete", async (req, res) => {
 });
 
 //  * Update data of the user
-app.patch("/userupdate", async (req, res) => {
-  const userId = req.body._id;
+app.patch("/user/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  const data = req.body;
+  const ALLOWED_UPDATES = ["photUrl", "about", "gender", "age", "skills"];
+  const isUpdateAllowed = Object.keys(data).every((k) =>
+    ALLOWED_UPDATES.includes(k)
+);
+
+  if (!isUpdateAllowed) {
+    throw new Error("Update not Allowed");
+  }
+  if (Array.isArray(data?.skills) && data.skills.length > 10) {
+  throw new Error("Skills cannot be more than 10");
+}
+
 
   try {
-    const user = await User.findByIdAndUpdate(userId, req.body);
+    const user = await User.findByIdAndUpdate(userId, data, {
+      returnDocument: "after", //return the updated document
+      runValidators: true, //validations functions are ran after this permission
+    });
     res.send("user updated successfully");
   } catch (error) {
     res.send("failed to update user");
@@ -90,20 +105,17 @@ app.patch("/userupdate", async (req, res) => {
 });
 
 //  * Update data of the user by email
-app.patch("/useremail", async (req, res) => {
-  const email = req.body.email;
+// app.patch("/useremail", async (req, res) => {
+//   const email = req.body.email;
 
-  try {
-    const user = await User.findOneAndUpdate({email: email}, req.body);
-    
-    res.send("user updated successfully by email");
-  } catch (error) {
-    res.send("failed to update user by email");
-  }
-});
+//   try {
+//     const user = await User.findOneAndUpdate({email: email}, req.body);
 
-
-
+//     res.send("user updated successfully by email");
+//   } catch (error) {
+//     res.send("failed to update user by email");
+//   }
+// });
 
 const PORT = 3000;
 connectDb()
