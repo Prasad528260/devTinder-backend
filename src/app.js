@@ -1,16 +1,36 @@
 const express = require("express");
+const bcrypt = require("bcrypt");
 const app = express();
 const User = require("./models/user");
 const connectDb = require("./config/database");
 const user = require("./models/user");
-app.use(express.json());
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
+const { userAuth } = require("./middlewares/auth");
 
+app.use(express.json());
+app.use(cookieParser());
+const { signUpValidation } = require("./utils/validation");
+
+// * Signup
 app.post("/signup", async (req, res) => {
   // //? creating new user with the data or technically creating a new instance of User model
   // const user=new User(userObj);
 
   // ? Dynamic way to create instance os user
-  const user = new User(req.body);
+  //* validations of req using helper function in utils
+  signUpValidation(req);
+  //* encryptio of password
+  const { firstName, lastName, email, password } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
+  // console.log(hashedPassword);
+
+  const user = new User({
+    firstName,
+    lastName,
+    email,
+    password: hashedPassword,
+  });
 
   //* saving the user to database
   try {
@@ -22,100 +42,48 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-// * find user by email
-app.get("/user", async (req, res) => {
-  const userEmail = req.body.email;
+// * Login
+app.post("/login", async (req, res) => {
   try {
-    const user = await User.findOne({ email: userEmail });
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
     if (!user) {
-      res.status(404).send("User not found");
+      throw new Error("Invalid credentials");
     }
-    {
-      res.send(user);
-    }
-  } catch (err) {
-    res.status(400).send("Error finding user" + err.message);
-  }
-});
+    const passwordValid = await bcrypt.compare(password, user.password);
+    if (!passwordValid) {
+      throw new Error("Invalid credentials");
+    } else {
+      //  create a jwt token to pass in cookie
+      const token = await jwt.sign({ _id: user._id }, "Dev@TinderPrasad123", {
+        expiresIn: "1d",
+      });
 
-//* Feed ApI -GET/Feed - get all the users from the database
-app.get("/feed", async (req, res) => {
-  try {
-    const users = await User.find({});
-    if (!users) {
-      res.status(404).send("User not found");
+      //  add token to cookie and send back to the user
+      res.cookie("token", token, {
+        expires: new Date(Date.now() * 8 * 3600000),
+      });
+      res.send("Login Successful !!");
     }
-    {
-      res.send(users);
-    }
-  } catch (err) {
-    res.status(400).send("Error finding user" + err.message);
-  }
-});
-
-app.get("/userId", async (req, res) => {
-  // const user= await User.findOne({email: req.body.email})
-  // const {_id}= user;
-  // console.log(_id);
-  // const userById= await User.findById(_id);
-  const userById = await User.findById({ _id: req.body._id });
-  if (userById) {
-    res.send(userById);
-  } else {
-    res.send("user by id not found");
-  }
-});
-
-// * DELETE A USER
-app.delete("/user", async (req, res) => {
-  try {
-    const user = await User.findByIdAndDelete({ _id: req.body._id });
-    res.send("user deleted successfully");
   } catch (e) {
-    res.send("failed to delete user");
+    res.status(400).send("Error : " + e.message);
   }
 });
 
-//  * Update data of the user
-app.patch("/user/:userId", async (req, res) => {
-  const userId = req.params.userId;
-  const data = req.body;
-  const ALLOWED_UPDATES = ["photUrl", "about", "gender", "age", "skills"];
-  const isUpdateAllowed = Object.keys(data).every((k) =>
-    ALLOWED_UPDATES.includes(k)
-);
-
-  if (!isUpdateAllowed) {
-    throw new Error("Update not Allowed");
-  }
-  if (Array.isArray(data?.skills) && data.skills.length > 10) {
-  throw new Error("Skills cannot be more than 10");
-}
-
-
+// * profile
+app.get("/profile", userAuth, async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(userId, data, {
-      returnDocument: "after", //return the updated document
-      runValidators: true, //validations functions are ran after this permission
-    });
-    res.send("user updated successfully");
-  } catch (error) {
-    res.send("failed to update user");
+    const user = req.user;
+    res.send(user);
+  } catch (e) {
+    throw new Error("ERROR : " + E.message);
   }
 });
 
-//  * Update data of the user by email
-// app.patch("/useremail", async (req, res) => {
-//   const email = req.body.email;
-
-//   try {
-//     const user = await User.findOneAndUpdate({email: email}, req.body);
-
-//     res.send("user updated successfully by email");
-//   } catch (error) {
-//     res.send("failed to update user by email");
-//   }
-// });
+app.post("/sendConnectionRequest", userAuth, (req, res) => {
+  const user = req.user;
+  console.log(user.firstName + " has sent the connection request");
+});
 
 const PORT = 3000;
 connectDb()

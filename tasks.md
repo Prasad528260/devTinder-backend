@@ -9,3 +9,18 @@
 
 
 NEVER EVER TRUST req.body
+
+SIGNUP VALIDATION
+- validate data in signup 
+- install bcrypt package
+- create a password hash
+- save user with encrypted password
+
+- install cookie-parser
+- send a dumy cookie to user
+- create a profile api and check if yo recieved a cookie back
+- In login api ,after email and pass validation , create a jwt token send back to user in cookie
+- read cookie inside user api and find user logged in
+
+- write userAuth middleware and add to profileapi and new api senconnection
+- set the expiry of jwt token and cookes to 7 days 
