@@ -85,10 +85,23 @@ const userSchema = mongoose.Schema(
     about: {
       type: String,
       defaultValue: "This is default description of user",
+      validate(value) {
+          if(value.length>100){
+            throw new Error("only 100 characters allowed");
+            
+          }
+        }
+
     },
     skills: {
       type: [String],
       required: true,
+        validate(value) {
+          if(value.length>10){
+            throw new Error("only 10 fields allowed");
+            
+          }
+        }
     },
   },
   {
