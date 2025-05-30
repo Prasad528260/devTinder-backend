@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const userSchema = mongoose.Schema(
   {
@@ -36,8 +38,7 @@ const userSchema = mongoose.Schema(
       trim: true,
       validate(val) {
         if (!validator.isEmail(val)) {
-            throw new Error("invalid email address");
-            
+          throw new Error("invalid email address");
         }
       },
     },
@@ -46,8 +47,7 @@ const userSchema = mongoose.Schema(
       required: true,
       validate(val) {
         if (!validator.isStrongPassword(val)) {
-            throw new Error("Not A Strong Password "+ val);
-            
+          throw new Error("Not A Strong Password " + val);
         }
       },
     },
@@ -76,17 +76,15 @@ const userSchema = mongoose.Schema(
       type: String,
       defaultValue:
         "https://www.pnrao.com/wp-content/uploads/2023/06/dummy-user-male.jpg",
-        validate(value){
-            if (!validator.isURL(value)) {
-                throw new Error("Invalid Photo URl "+ value);
-                
-            }
+      validate(value) {
+        if (!validator.isURL(value)) {
+          throw new Error("Invalid Photo URl " + value);
         }
+      },
     },
     about: {
       type: String,
       defaultValue: "This is default description of user",
-      
     },
     skills: {
       type: [String],
@@ -97,5 +95,17 @@ const userSchema = mongoose.Schema(
     timestamps: true,
   }
 );
-
+userSchema.methods.getJWT = async function () {
+  const user = this;
+  const token = await jwt.sign({ _id: user._id }, "Dev@TinderPrasad123", {
+    expiresIn: "1d",
+  });
+  return token;
+};
+userSchema.methods.validatePassword = async function (password) {
+  const user = this;
+  const hashedPassword = user.password;
+  const validate = await bcrypt.compare(password, hashedPassword);
+  return validate;
+};
 module.exports = mongoose.model("User", userSchema);

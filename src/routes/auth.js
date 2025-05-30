@@ -1,0 +1,62 @@
+const express= require("express");
+const authRouter=express.Router();
+const bcrypt = require("bcrypt");
+const User = require("../models/user");
+const { signUpValidation } = require("../utils/validation");
+
+// * Signup
+authRouter.post("/signup", async (req, res) => {
+  // //? creating new user with the data or technically creating a new instance of User model
+  // const user=new User(userObj);
+
+  // ? Dynamic way to create instance os user
+  //* validations of req using helper function in utils
+  signUpValidation(req);
+  //* encryptio of password
+  const { firstName, lastName, email, password } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
+  // console.log(hashedPassword);
+
+  const user = new User({
+    firstName,
+    lastName,
+    email,
+    password: hashedPassword,
+  });
+
+  //* saving the user to database
+  try {
+    await user.save();
+    res.send("user added successfully");
+    // console.log(user);
+  } catch (err) {
+    res.status(400).send("Error saving user to databse" + err.message);
+  }
+});
+
+// * Login
+authRouter.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new Error("Invalid credentials");
+    }
+    const passwordValid = await user.validatePassword(password);
+    if (!passwordValid) {
+      throw new Error("Invalid credentials");
+    } else {
+      //  create a jwt token to pass in cookie
+      const token = await user.getJWT();
+
+      //  add token to cookie and send back to the user
+      res.cookie("token", token, {
+        expires: new Date(Date.now() + 8 * 3600000),
+      });
+      res.send("Login Successful !!");
+    }
+  } catch (e) {
+    res.status(400).send("Error : " + e.message);
+  }
+});
+module.exports=authRouter;

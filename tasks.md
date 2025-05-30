@@ -24,3 +24,9 @@ SIGNUP VALIDATION
 
 - write userAuth middleware and add to profileapi and new api senconnection
 - set the expiry of jwt token and cookes to 7 days 
+
+
+routers
+- explore express.router
+- manage auth profile request router
+- import this router in app.js
