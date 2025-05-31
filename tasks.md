@@ -10,6 +10,7 @@
 
 NEVER EVER TRUST req.body
 
+#  SIGNUP VALIDATION
 SIGNUP VALIDATION
 - validate data in signup 
 - install bcrypt package
@@ -26,13 +27,13 @@ SIGNUP VALIDATION
 - set the expiry of jwt token and cookes to 7 days 
 
 
-routers
+# routers
 - explore express.router
 - manage auth profile request router
 - import this router in app.js
 
 
-CONNECTION REQUEST 
+# CONNECTION REQUEST 
 - create connectionRequestSchema add fields and validation
 - connection request api and think about all the corner cases, proper validation of data,handle corner cases
 - $or:[] querry $and:[] search on mongodb
