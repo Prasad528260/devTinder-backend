@@ -11,10 +11,10 @@ profileRouter
 - PATCH /profile/password
 
 connectionrequestRouter
-- POST /signup/request/send/interested/:userId
-- POST /login/request/send/ignored/:userId
-- POST /logout/request/review/accepted/:requestId
-- POST /logout/request/review/rejected/:requestId
+- POST /request/send/:status/:userId
+- POST /request/send/ignored/:userId
+- POST /request/review/accepted/:requestId
+- POST /request/review/rejected/:requestId
 
 userRouter
 - GET /USER/CONNECTIONS
