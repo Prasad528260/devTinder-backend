@@ -1,22 +1,25 @@
 # Devitinder  api
 
-authRouter
+# authRouter
 - POST /signup
 - POST /login
 - POST /logout
 
-profileRouter
+# profileRouter
 - GET /profile/view
 - PATCH /profile/edit
 - PATCH /profile/password
 
-connectionrequestRouter
+# connectionrequestRouter
 - POST /request/send/:status/:userId
 - POST /request/send/ignored/:userId
+- POST /request/send/interested/:userId
+
+- POST /request/review/:status/:requestId
 - POST /request/review/accepted/:requestId
 - POST /request/review/rejected/:requestId
 
-userRouter
-- GET /USER/CONNECTIONS
-- GET /USER/request
+# userRouter
+- GET /user/connections
+- GET /user/request
 - GET /feed

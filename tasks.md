@@ -38,4 +38,5 @@ SIGNUP VALIDATION
 - connection request api and think about all the corner cases, proper validation of data,handle corner cases
 - $or:[] querry $and:[] search on mongodb
 - schema.pre function use cases
--
+- write code with proper validations /request/review/:status/:requestId
+
