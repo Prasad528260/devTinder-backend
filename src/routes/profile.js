@@ -9,7 +9,7 @@ const validatePassword = require("../models/user");
 profileRouter.get("/profile/view", userAuth, async (req, res) => {
   try {
     const user = req.user;
-    res.send(user);
+    res.json({ message: "Here are the profiles of users" }, { data: user });
   } catch (e) {
     throw new Error("ERROR : " + e.message);
   }
@@ -24,11 +24,28 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
     const user = req.user;
     // console.log(user._id);
 
-    const { firstName, lastName, age, gender, photUrl, skills, about } =
-      req.body;
+    const {
+      firstName,
+      lastName,
+      age,
+      gender,
+      photUrl,
+      skills,
+      about,
+      interestedIn,
+    } = req.body;
     const editedUser = await User.findByIdAndUpdate(
       user._id,
-      { firstName, lastName, about, age, gender, photUrl, skills },
+      {
+        firstName,
+        lastName,
+        about,
+        age,
+        gender,
+        photUrl,
+        skills,
+        interestedIn,
+      },
       { new: true, runValidators: true }
     );
     res.json({
@@ -36,7 +53,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
       data: editedUser,
     });
   } catch (e) {
-    res.send("ERROR : " + e.message);
+    res.json({ message: "ERROR : " + e.message });
   }
 });
 
@@ -62,7 +79,7 @@ profileRouter.patch("/profile/password", userAuth, async (req, res) => {
       data: updatePasswordUser,
     });
   } catch (e) {
-    res.status(400).send("ERROR : " + e.message);
+    res.status(400).json({ message: "ERROR : " + e.message });
   }
 });
 

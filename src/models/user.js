@@ -66,6 +66,7 @@ const userSchema = mongoose.Schema(
 
     gender: {
       type: String,
+      defaultValue:"",
       validate(val) {
         if (!["male", "female", "other"].includes(val)) {
           throw new Error("Gender data is not valid .");
@@ -86,22 +87,27 @@ const userSchema = mongoose.Schema(
       type: String,
       defaultValue: "This is default description of user",
       validate(value) {
-          if(value.length>100){
-            throw new Error("only 100 characters allowed");
-            
-          }
+        if (value.length > 100) {
+          throw new Error("only 100 characters allowed");
         }
-
+      },
     },
     skills: {
       type: [String],
       required: true,
-        validate(value) {
-          if(value.length>10){
-            throw new Error("only 10 fields allowed");
-            
-          }
+      validate(value) {
+        if (value.length > 10) {
+          throw new Error("only 10 fields allowed");
         }
+      },
+    },
+    interestedIn: {
+      type: String,
+      validate(val) {
+        if (!["male", "female", "other"].includes(val)) {
+          throw new Error("Interest is not valid .");
+        }
+      },
     },
   },
   {
