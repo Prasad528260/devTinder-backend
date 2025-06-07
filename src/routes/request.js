@@ -45,10 +45,7 @@ requestRouter.post(
       });
       const connection = await connectionRequest.save();
       if (connection) {
-        res.json({
-          message: `${fromUser.firstName} is ${status} in ${toUser.firstName}`,
-          data: connection,
-        });
+        res.json(connection);
       }
     } catch (err) {
       res.status(400).json("ERROR : " + err.message);
@@ -79,17 +76,10 @@ requestRouter.post(
         _id: requestId,
         status: "interested",
       });
-      if (!connection) {
-        return res.status(400).json({
-          message: "Connection not allowed",
-        });
-      }
+      
       connection.status = status;
       const data = await connection.save();
-      res.json({
-        message: `${loggedInUser.firstName} has ${status} the request.`,
-        data,
-      });
+      res.json(data);
     } catch (err) {
       res.status(400).json("ERROR : " + err.message);
     }

@@ -26,8 +26,12 @@ authRouter.post("/signup", async (req, res) => {
 
   //* saving the user to database
   try {
-    await user.save();
-    res.json({ message: "user added successfully" });
+    const savedUser = await user.save();
+    const token = await savedUser.getJWT();
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 8 * 3600000),
+    });
+    res.json(savedUser);
     // console.log(user);
   } catch (err) {
     res
@@ -55,10 +59,10 @@ authRouter.post("/login", async (req, res) => {
       res.cookie("token", token, {
         expires: new Date(Date.now() + 8 * 3600000),
       });
-      res.json({ message: "Login Successful !!" });
+      res.json(user);
     }
   } catch (e) {
-    res.status(400).json({ message: "Error : " + e.message });
+    res.status(401).json({ message: e.message });
   }
 });
 

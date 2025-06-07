@@ -34,10 +34,7 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
         message: "There are no Connections",
       });
     }
-    res.json({
-      message: "Connection requests are as follows",
-      data,
-    });
+    res.json(data);
   } catch (e) {
     res.status(400).json({ message: "ERROR : " + e.message });
   }
@@ -57,16 +54,10 @@ userRouter.get("/user/request/recieved", userAuth, async (req, res) => {
       });
     }
     if (connection.length === 0) {
-      return res.json({
-        message: "There are no pending requests",
-        data: connection,
-      });
+      return res.json(connection);
     }
 
-    res.json({
-      message: "Following are the pending requests ",
-      data: connection,
-    });
+    res.json(connection);
   } catch (e) {
     res.status(400).json({
       message: "ERROR : " + e.message,
@@ -107,7 +98,10 @@ userRouter.get("/feed", userAuth, async (req, res) => {
           { _id: { $nin: Array.from(usersToHide) } },
           { _id: { $ne: user._id } },
         ],
-      }).select("firstName lastName age gender photUrl skills about").skip(skip).limit(limit);;
+      })
+        .select("firstName lastName age gender photUrl skills about")
+        .skip(skip)
+        .limit(limit);
     } else {
       connections = await ConnectionRequest.find({
         $or: [{ fromUserId: user._id }, { toUserId: user._id }],
@@ -124,7 +118,10 @@ userRouter.get("/feed", userAuth, async (req, res) => {
           { _id: { $nin: Array.from(usersToHide) } },
           { _id: { $ne: user._id } },
         ],
-      }).select("firstName lastName age gender photUrl skills about").skip(skip).limit(limit);
+      })
+        .select("firstName lastName age gender photUrl skills about")
+        .skip(skip)
+        .limit(limit);
     }
     if (!finalData) {
       return res.status(400).json({
@@ -136,10 +133,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
         message: "No user available currently",
       });
     }
-    res.json({
-      message: "these are matched users",
-      data: finalData,
-    });
+    res.json(finalData);
   } catch (e) {
     res.status(400).json({
       message: "ERROR : " + e.message,
@@ -148,3 +142,6 @@ userRouter.get("/feed", userAuth, async (req, res) => {
 });
 
 module.exports = userRouter;
+
+
+

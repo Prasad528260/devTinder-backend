@@ -9,7 +9,7 @@ const validatePassword = require("../models/user");
 profileRouter.get("/profile/view", userAuth, async (req, res) => {
   try {
     const user = req.user;
-    res.json({ message: "Here are the profiles of users" }, { data: user });
+    res.json(user);
   } catch (e) {
     throw new Error("ERROR : " + e.message);
   }
@@ -48,10 +48,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
       },
       { new: true, runValidators: true }
     );
-    res.json({
-      message: `${editedUser.firstName}, your data has been updated successfully`,
-      data: editedUser,
-    });
+    res.json(editedUser);
   } catch (e) {
     res.json({ message: "ERROR : " + e.message });
   }
