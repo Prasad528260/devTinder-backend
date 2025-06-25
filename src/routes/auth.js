@@ -1,9 +1,9 @@
-const express = require("express");
+ const express = require("express");
 const authRouter = express.Router();
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const { signUpValidation } = require("../utils/validation");
-
+require('dotenv').config(); 
 // * Signup
 authRouter.post("/signup", async (req, res) => {
   // //? creating new user with the data or technically creating a new instance of User model

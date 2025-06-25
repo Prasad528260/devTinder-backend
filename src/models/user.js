@@ -78,7 +78,7 @@ const userSchema = mongoose.Schema(
       defaultValue:
         "https://www.pnrao.com/wp-content/uploads/2023/06/dummy-user-male.jpg",
       validate(value) {
-        if (!validator.isURL(value)) {
+        if (validator.isURL(value)) {
           throw new Error("Invalid Photo URl " + value);
         }
       },
@@ -116,7 +116,7 @@ const userSchema = mongoose.Schema(
 );
 userSchema.methods.getJWT = async function () {
   const user = this;
-  const token = await jwt.sign({ _id: user._id }, "Dev@TinderPrasad123", {
+  const token = await jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
     expiresIn: "1d",
   });
   return token;

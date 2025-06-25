@@ -4,6 +4,8 @@ const connectDb = require("./config/database");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const { config } = require('dotenv');
+config();
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -22,15 +24,14 @@ app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", userRouter);
-
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 connectDb()
   .then(() => {
     console.log("database connection successful");
     app.listen(PORT, () => {
-      console.log("Server is running on http://localhost:3000");
+      console.log(`Server is running on http://localhost:${PORT}`);
     });
   })
-  .catch(() => {
-    console.log("database connection failed");
+  .catch((e) => {
+    console.log("database connection failed ",e.message);
   });

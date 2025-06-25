@@ -11,7 +11,7 @@ const userAuth = async (req, res, next) => {
       throw new Error("Token is Invalid");
     }
     // find the user
-    const { _id } = await jwt.verify(token, "Dev@TinderPrasad123");
+    const { _id } = await jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(_id);
     if (!user) {
       throw new Error("User not found");
