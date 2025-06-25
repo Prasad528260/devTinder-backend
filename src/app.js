@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const { config } = require('dotenv');
+const http =require('http')
 config();
 app.use(
   cors({
@@ -19,16 +20,21 @@ const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
+const { initializeSocket } = require("./utils/socket");
 
 app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", userRouter);
 const PORT = process.env.PORT || 3000;
+
+const server=http.createServer(app)
+initializeSocket(server);
+
 connectDb()
   .then(() => {
     console.log("database connection successful");
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);
     });
   })

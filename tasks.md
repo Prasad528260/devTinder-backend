@@ -40,3 +40,8 @@ SIGNUP VALIDATION
 - schema.pre function use cases
 - write code with proper validations /request/review/:status/:requestId
 
+
+# SOCKET SETUP
+- first install socket.io
+- then using existing express app create http server, after that initialize socket.io in another file 
+
