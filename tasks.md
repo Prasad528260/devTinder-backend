@@ -45,3 +45,4 @@ SIGNUP VALIDATION
 - first install socket.io
 - then using existing express app create http server, after that initialize socket.io in another file 
 
+# show green symbol when online
